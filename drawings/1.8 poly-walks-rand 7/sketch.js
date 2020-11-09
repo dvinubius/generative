@@ -3,21 +3,21 @@ let p2;
 let hostPoly;
 const drawDepth = 20;
 
-let sliderIsolation;
+let sliderCornerIsolation;
 let cornerIsolation;
 
 let drawCount = 0;
 
 function setup() {
-  createCanvas(600, 600);
+  createCanvas(800, 800);
   // noLoop();
   frameRate(60);
   colorMode(HSL);
   angleMode(DEGREES);
   background(0);
 
-  sliderIsolation = createSliderWithState(0.5, 30, 160);
-  sliderIsolation.sliderEl.input(() => {
+  sliderCornerIsolation = createSliderWithState(0.5, 30, 50);
+  sliderCornerIsolation.sliderEl.input(() => {
     background(0);
     drawCount = 0;
     loop();
@@ -27,7 +27,7 @@ function setup() {
 
 function draw() {
   drawCount++;
-  cornerIsolation = map(sliderIsolation.sliderEl.value(), 0, 100, 0, 1);
+  cornerIsolation = map(sliderCornerIsolation.sliderEl.value(), 0, 100, 0, 1);
   
   stroke(20);
   noFill();
@@ -39,7 +39,6 @@ function draw() {
   
   rectMode(CORNER);
   
-  // const maxX = frameCount;
   const maxX = width;
 
   const high1 = random(maxX);
@@ -69,18 +68,3 @@ function draw() {
     noLoop();
   }
 }
-
-const drawDescendingSubPolys = (hostPoly, depth, ratio = 0.5) => {
-  let nextPoly = hostPoly;
-  for (let i = 0; i < depth; i++) {
-    drawPolygon(nextPoly);
-    nextPoly = walkPolygonIterations(nextPoly, 1, () => ratio)[0];
-  }
-}
-
-const drawPolygon = (points) => {
-  noFill();
-  beginShape();
-  points.forEach((p) => vertex(p.x, p.y));
-  endShape(CLOSE);
-};

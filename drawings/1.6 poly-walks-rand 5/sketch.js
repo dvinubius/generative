@@ -58,18 +58,3 @@ function draw() {
     noLoop();
   }
 }
-
-const drawDescendingSubPolys = (hostPoly, depth, ratio = 0.5) => {
-  let nextPoly = hostPoly;
-  for (let i = 0; i < depth; i++) {
-    drawPolygon(nextPoly);
-    nextPoly = walkPolygonIterations(nextPoly, 1, () => ratio)[0];
-  }
-}
-
-const drawPolygon = (points) => {
-  noFill();
-  beginShape();
-  points.forEach((p) => vertex(p.x, p.y));
-  endShape(CLOSE);
-};

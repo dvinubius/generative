@@ -92,17 +92,17 @@ function draw() {
   strokeWeight(sWeight);
   stroke(...sColArgs);
   
-  drawDescendingSubPolys(hostPoly, drawDepth);
+  drawSubPolys(hostPoly, drawDepth);
   
   if (drawCount >= maxDraws) {
     noLoop();
   }
 }
 
-const drawDescendingSubPolys = (hostPoly, depth) => {
+const drawSubPolys = (hostPoly, depth) => {
   let nextPoly = hostPoly;
   for (let i = 0; i < depth; i++) {
-    drawPolygon(nextPoly);  
+    drawPolygonCurved(nextPoly);  
     nextPoly = [
       pointBtw(nextPoly[0], nextPoly[1], random(r1)),
       pointBtw(nextPoly[1], nextPoly[2], random(r2)),
@@ -111,10 +111,3 @@ const drawDescendingSubPolys = (hostPoly, depth) => {
     ];
   }
 }
-
-const drawPolygon = (points) => {
-  noFill();
-  beginShape();
-  points.forEach((p) => vertex(p.x, p.y));
-  endShape(CLOSE);
-};

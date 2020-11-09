@@ -21,10 +21,10 @@ function setup() {
   angleMode(DEGREES);
   background(...bgColArgs);
   
-  sliderIsolation = createSliderWithState(0, 30, 160);
+  sliderCornerIsolation = createSliderWithState(0, 30, 160);
   sliderTwist = createSliderWithState(1, 230, 120);
   sliderGridDensity = createSliderWithState(1, 430, 160);
-  sliderIsolation.sliderEl.input(() => {
+  sliderCornerIsolation.sliderEl.input(() => {
     initHostPoly();
     background(...bgColArgs);
     loop();
@@ -42,7 +42,7 @@ function initHostPoly() {
   const maxX = width;
   const maxY = height;
 
-  const cornerIsolation = map(sliderIsolation.sliderEl.value(), 0, 100, 0, 0.5);
+  const cornerIsolation = map(sliderCornerIsolation.sliderEl.value(), 0, 100, 0, 0.5);
   const highMin = random(maxX*cornerIsolation);
   const highMax = maxX - random(maxX*cornerIsolation);
   const lowMin = random(maxX*cornerIsolation);
@@ -86,10 +86,10 @@ function draw() {
   strokeWeight(strokeW);
   stroke(...strokeColArgs);
   
-  drawDescendingSubPolys(hostPoly, drawDepth);
+  drawDescendingSubPolysAndGrids(hostPoly, drawDepth);
 }
 
-const drawDescendingSubPolys = (hostPoly, depth) => {
+const drawDescendingSubPolysAndGrids = (hostPoly, depth) => {
   let nextPoly = hostPoly;
   for (let i = 0; i < depth; i++) {
     drawPolygon(nextPoly);
@@ -98,10 +98,3 @@ const drawDescendingSubPolys = (hostPoly, depth) => {
     nextPoly = additionals[floor(gridDensity / 2)];
   }
 }
-
-const drawPolygon = (points) => {
-  noFill();
-  beginShape();
-  points.forEach((p) => vertex(p.x, p.y));
-  endShape(CLOSE);
-};

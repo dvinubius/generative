@@ -1,0 +1,105 @@
+
+let hostPoly;
+
+let drawCount = 0;
+
+let running = false;
+
+let ratioSlider;
+let ratio;
+let depthSlider;
+let drawDepth;
+
+let lastY;
+
+let useLastPosXY = false;
+
+function setup() {
+  const cnv = createCanvas(800, 800);
+  cnv.mouseOver(() => useLastPosXY = false);
+  frameRate(60);
+  colorMode(HSL);
+  angleMode(DEGREES);
+  background(97);
+  
+  ratioSlider = createSliderWithState(0.1, 130, 30)
+  depthSlider = createSliderWithState(0.8, 460, 30);
+
+  [ratioSlider, depthSlider].forEach(sl => sl.sliderEl.input(
+    () => {
+      useLastPosXY = true;
+      running = true;
+    }
+  ));
+}
+
+
+function mousePressed() {
+  if (mouseY > 0)
+  running = !running;
+}
+
+function draw() {
+  if (!running) {return;}
+
+  background(97);
+  
+  ratio = map(ratioSlider.sliderEl.value(), 0, 100, 0, 1);
+  drawDepth = floor(map(depthSlider.sliderEl.value(), 0, 100, 2, 163));
+  
+  drawCount++;
+  
+  stroke(10);
+  noFill();   
+  rect(0,0,width,height);
+  
+   hostPoly = [
+    createVector(200, 0),
+    createVector(600, 0),
+     createVector(width, 300),
+     createVector(width, 600),
+     createVector(550, height),
+     createVector(200, height),
+     createVector(200, height),
+  ];
+  
+  
+  noFill();
+  strokeWeight(0.2);
+  stroke(270, 50, 12, 0.9);
+  
+  const posY = useLastPosXY ? lastY : mouseY;
+  const posX = useLastPosXY ? lastX : mouseX;
+  lastX = posX;
+  lastY = posY;
+  let anchorFn;
+  
+
+  const direction = map(posX/width, 0, 1, 1, - 1);
+  // anchorFn = (i) => createVector(posX - (i / 8)**8, posY + (i**2/4 - i * 24)*direction);
+  anchorFn = (i) => createVector(-2, posY + (i**2/4 - i * 24)*direction);
+
+  drawDescendingSubPolysWithAnchor1(
+    anchorFn,
+    hostPoly,
+    drawDepth,
+    ratio,
+  );  
+}
+
+const drawDescendingSubPolysWithAnchor1 = (anchorGen, hostPoly, depth, ratio = 0.5, curved = false) => {
+  let nextPoly = hostPoly;
+  for (let i = 0; i < depth; i++) {
+    const doClose = false;
+    stroke(270, 50, 12, 0.9*(1 - 20/i**2));
+    curved ? drawPolygonCurved(nextPoly, doClose) : drawPolygon(nextPoly, doClose);
+    
+    const polygonPoints = nextPoly;
+    const len = polygonPoints.length;
+    nextPoly = [anchorGen(i)].concat(polygonPoints.map((point, i) => {
+      const nextPoint = i < len - 1 ? polygonPoints[i + 1] : polygonPoints[0];
+      return pointBtw(point, nextPoint, ratio);
+    }));
+    nextPoly[nextPoly.length - 1] = nextPoly[0];
+  }
+};

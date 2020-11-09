@@ -19,13 +19,13 @@ function setup() {
   angleMode(DEGREES);
   background(0);
 
-  sliderIsolation = createSliderWithState(initialDescentRatio, 30, 160);
+  sliderCornerIsolation = createSliderWithState(initialDescentRatio, 30, 160);
   cornerIsolation = initialDescentRatio;
-  sliderIsolation.sliderEl.input(() => {
+  sliderCornerIsolation.sliderEl.input(() => {
     background(0);
     drawCount = 0;
     descentCount = 0;
-    cornerIsolation = map(sliderIsolation.sliderEl.value(), 0, 100, 0, 1);
+    cornerIsolation = map(sliderCornerIsolation.sliderEl.value(), 0, 100, 0, 1);
     loop();
   });
 }
@@ -73,7 +73,6 @@ function draw() {
   descentCount = descentCount === descentDepth ?
     0 : descentCount+1;
   
-  // nextPoly = walkPolygonIterations(nextPoly, 1, () => descentRatio)[0];
   const r1 = random(0.15);
   const r2 = random(0.15);
   const r3 = random(0.25);
@@ -85,15 +84,7 @@ function draw() {
     pointBtw(nextPoly[3], nextPoly[0], r4),
   ];
 
-
   if (drawCount >= 40 * descentDepth) {
     noLoop();
   }
 }
-
-const drawPolygon = (points) => {
-  noFill();
-  beginShape();
-  points.forEach((p) => vertex(p.x, p.y));
-  endShape(CLOSE);
-};
