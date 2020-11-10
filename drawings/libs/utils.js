@@ -39,10 +39,13 @@ const drawDescendingSubPolys = (hostPoly, depth, ratio = 0.5, curved = false) =>
   }
 }
 
-const drawDescendingSubPolysWithAnchor = (anchorGen, hostPoly, depth, ratio = 0.5, curved = false) => {
+const drawDescendingSubPolysWithAnchor = (anchorGen, hostPoly, depth, ratio = 0.5, curved = false, strkFn) => {
   let nextPoly = hostPoly;
   for (let i = 0; i < depth; i++) {
     const doClose = false;
+    if (strkFn) {
+      strkFn(i);
+    }
     curved ? drawPolygonCurved(nextPoly, doClose) : drawPolygon(nextPoly, doClose);
     
     const polygonPoints = nextPoly;
@@ -81,17 +84,26 @@ const regPolygon = (x, y, radius, npoints) => {
   endShape(CLOSE);
 };
 
-function createSliderWithState(initial = 1, posX = 30, posY = 60, index = 0) {
+function createSliderWithState(initial = 1, posX = 30, posY = 60) {
   const sl = createSlider(0, 100, initial * 100, 1);
   const ret = {
     sliderEl: sl, 
     hasRecentChange: false
   }
-  sl.position(posX + index * (200 + posX), posY);
+  sl.position(posX, posY);
   sl.style("width", `200px`);
   sl.input(() => ret.hasRecentChange = true);
   return ret;
 }
+
+function createSliderWithStateAndText(initial = 1, posX = 30, posY = 60, text) {
+  const ret = createSliderWithState(initial, posX + 28, posY);
+  const sp = createSpan(text);
+  sp.position(posX, posY);
+  sp.style('font-size', '14px');
+  sp.style('color', '#ffffff');
+  return ret;
+};
 
 const chaikin = (polygonPoints, manyIterations, stepFactorFn1, stepFactorFn2) => {
   const genPolys = [];
@@ -108,7 +120,6 @@ const chaikin = (polygonPoints, manyIterations, stepFactorFn1, stepFactorFn2) =>
   }
   return genPolys;
 };
-
 
 
 const drawPolygon = (points, doClose = true) => {

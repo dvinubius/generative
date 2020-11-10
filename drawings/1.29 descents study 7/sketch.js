@@ -79,27 +79,12 @@ function draw() {
   anchorFn = (i) => createVector(posX - (i / 4)**2, posY + (i**2/4 - i * 24)*direction);
   // anchorFn = (i) => createVector(-2, posY + (i**2/4 - i * 24)*direction);
 
-  drawDescendingSubPolysWithAnchor1(
+  drawDescendingSubPolysWithAnchor(
     anchorFn,
     hostPoly,
     drawDepth,
     ratio,
+    undefined,
+    (i) => stroke(270, 50, 12, 0.9*(1 - 0.001*(i - 32)**2))
   );  
 }
-
-const drawDescendingSubPolysWithAnchor1 = (anchorGen, hostPoly, depth, ratio = 0.5, curved = false) => {
-  let nextPoly = hostPoly;
-  for (let i = 0; i < depth; i++) {
-    const doClose = false;
-    stroke(270, 50, 12, 0.9*(1 - 0.001*(i - 32)**2));
-    curved ? drawPolygonCurved(nextPoly, doClose) : drawPolygon(nextPoly, doClose);
-    
-    const polygonPoints = nextPoly;
-    const len = polygonPoints.length;
-    nextPoly = [anchorGen(i)].concat(polygonPoints.map((point, i) => {
-      const nextPoint = i < len - 1 ? polygonPoints[i + 1] : polygonPoints[0];
-      return pointBtw(point, nextPoint, ratio);
-    }));
-    nextPoly[nextPoly.length - 1] = nextPoly[0];
-  }
-};

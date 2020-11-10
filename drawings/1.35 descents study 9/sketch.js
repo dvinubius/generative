@@ -66,6 +66,7 @@ function draw() {
   
   noFill();
   strokeWeight(0.2);
+  stroke(270, 50, 12, 0.9);
   
   const posY = useLastPosXY ? lastY : mouseY;
   const posX = useLastPosXY ? lastX : mouseX;
@@ -76,15 +77,37 @@ function draw() {
 
   const direction = map(posX/width, 0, 1, 1, - 1);
   anchorFn = (i) => createVector(
-    posX - (i / 8)**8,
-    posY + (i**2/4 - i * 24)*direction);
+    posX - (i / 4)**2 + cos(i*40),
+    posY + (i**2/4 - i * 24)*direction + sin(i*20)*30);
 
   drawDescendingSubPolysWithAnchor(
     anchorFn,
     hostPoly,
     drawDepth,
     ratio,
-    undefined, 
-    (i) => stroke(270, 50, 12, 0.9*(200/i**2))
+    undefined,
+    (i) => stroke(
+      270,
+      50,
+      12,
+      0.9
+    )
   );  
+
+  translate(width/2, height/2);
+  rotate(180);
+  translate(-width/2, -height/2);
+  drawDescendingSubPolysWithAnchor(
+    anchorFn,
+    hostPoly,
+    drawDepth,
+    ratio,
+    undefined,
+    (i) => stroke(
+      270,
+      50,
+      12,
+      0.9
+    )
+  ); 
 }

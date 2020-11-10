@@ -12,14 +12,14 @@ let randIntervalSlider;
 
 function setup() {
   createCanvas(800, 800);
-  frameRate(60);
+  frameRate(20);
   colorMode(HSL);
   angleMode(DEGREES);
   background(97);
   
   lumSlider = createSliderWithState(0.12, 130, 30);
-  depthSlider = createSliderWithState(0.1, 460, 30);
-  randIntervalSlider = createSliderWithState(0.2, 460, 60);
+  depthSlider = createSliderWithState(0.8, 460, 30);
+  randIntervalSlider = createSliderWithState(0, 460, 60);
 }
 
 
@@ -70,13 +70,19 @@ function draw() {
   
   noFill();
   strokeWeight(0.2);
-  stroke((270 + drawCount) % 360, 50, luminosity, 0.1);
   
   const anchorFn = (i) => createVector(mouseX, mouseY);
   drawDescendingSubPolysWithAnchor(
     anchorFn,
     hostPoly,
     drawDepth,
-    ratio
+    ratio,
+    undefined,
+    (i) => stroke(
+      (270 + drawCount) % 360,
+      50, 
+      luminosity,
+      0.3*(1 - 2.7/i)
+      )
   );  
 }

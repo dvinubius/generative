@@ -11,17 +11,30 @@ let ratioSlider;
 let randInterval;
 let randIntervalSlider;
 
+let pivotHeight;
+let pivotHeightSlider;
+let verticalShiftSlider;
+let verticalShift;
+
 function setup() {
   createCanvas(800, 800);
   frameRate(20);
   colorMode(HSL);
   angleMode(DEGREES);
   background(97);
+
+  const sp0 = createSpan('Mouse L-R => position - - - Mouse U-D => direction - - - Press \'r\' => reset');
+  sp0.position(12, 4);
+  sp0.style('letter-spacing: 0.2em');
+  sp0.style('font-size', '14px');
+  sp0.style('color', '#ffffff');
   
-  lumSlider = createSliderWithState(0.12, 130, 30);
-  depthSlider = createSliderWithState(0.5, 460, 30);
-  ratioSlider = createSliderWithState(0.1, 130, 60);
-  randIntervalSlider = createSliderWithState(0, 460, 60);
+  lumSlider = createSliderWithStateAndText(0.25, 12, 30, 'lum');
+  ratioSlider = createSliderWithStateAndText(0.5, 12, 60, 'rat');
+  pivotHeightSlider = createSliderWithStateAndText(0.2, 282, 30, 'div');
+  verticalShiftSlider = createSliderWithStateAndText(0.8, 282, 60, 'shft');
+  depthSlider = createSliderWithStateAndText(0.1, 542, 30, 'dep');
+  randIntervalSlider = createSliderWithStateAndText(0, 542, 60, 'rand');
 }
 
 function draw() {
@@ -38,14 +51,19 @@ function draw() {
   
   ratio = map(ratioSlider.sliderEl.value(), 0, 100, 0, 1);
   luminosity = map(lumSlider.sliderEl.value(), 0, 100, 0, 100);
-  drawDepth = floor(map(depthSlider.sliderEl.value(), 0, 100, 2, 43));
+  drawDepth = floor(map(depthSlider.sliderEl.value(), 0, 100, 28, 93));
   randInterval = map(randIntervalSlider.sliderEl.value(), 0, 100, 0, width/2);
+  pivotHeight = map(pivotHeightSlider.sliderEl.value(), 0, 100, 0, width*3/4);
+  verticalShift = map(verticalShiftSlider.sliderEl.value(), 0, 100, 20, 300);
   
+  translate(width/2, height/2);
+  rotate(90);
+  translate(-width/2+verticalShift, -height/2);
+
   drawCount++;
   
   stroke(10);
   noFill();   
-  rect(0,0,width,height);
   
   const added =  -randInterval/2 + random(randInterval);
   const high1 = width*1/4 + added;
@@ -73,30 +91,21 @@ function draw() {
   noFill();
   strokeWeight(0.2);
   
-  const direction = map(mouseX/width, 0, 1, 1, - 1);
-  // anchorFn = (i) => createVector(mouseX, mouseY + (i**2/8 - i * 12)*direction);
-  anchorFn = (i) => createVector(100 - (i / 2)**2, mouseY + (i**2/4 - i * 24)*direction);
-  drawDescendingSubPolysWithAnchor1(
+  const direction = map(mouseY/width, 0, 1, 1, - 1);
+  anchorFn = (i) => createVector(
+    pivotHeight - (i / 2)**2,
+    width - mouseX + (i**2/4 - i * 24)*direction
+  );
+  drawDescendingSubPolysWithAnchor(
     anchorFn,
     hostPoly,
     drawDepth,
-    ratio
+    ratio,
+    undefined,
+    (i) => stroke(
+      (270 + drawCount) % 360,
+      50,
+      luminosity,
+      0.25*(1 - 0.004*(i - 40)**2))
   );  
 }
-
-const drawDescendingSubPolysWithAnchor1 = (anchorGen, hostPoly, depth, ratio = 0.5, curved = false) => {
-  let nextPoly = hostPoly;
-  for (let i = 0; i < depth; i++) {
-    const doClose = false;
-    stroke((270 + drawCount) % 360, 50, luminosity, 0.9*(1 - 0.001*(i - 32)**2));
-    curved ? drawPolygonCurved(nextPoly, doClose) : drawPolygon(nextPoly, doClose);
-    
-    const polygonPoints = nextPoly;
-    const len = polygonPoints.length;
-    nextPoly = [anchorGen(i)].concat(polygonPoints.map((point, i) => {
-      const nextPoint = i < len - 1 ? polygonPoints[i + 1] : polygonPoints[0];
-      return pointBtw(point, nextPoint, ratio);
-    }));
-    nextPoly[nextPoly.length - 1] = nextPoly[0];
-  }
-};

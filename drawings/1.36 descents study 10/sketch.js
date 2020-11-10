@@ -71,20 +71,22 @@ function draw() {
   const posX = useLastPosXY ? lastX : mouseX;
   lastX = posX;
   lastY = posY;
-  let anchorFn;
   
-
-  const direction = map(posX/width, 0, 1, 1, - 1);
-  anchorFn = (i) => createVector(
-    posX - (i / 8)**8,
-    posY + (i**2/4 - i * 24)*direction);
+  let anchorFn = (i) => createVector(
+    posX - (i / 4)**2 + cos(i*40),
+    posY + sin(i*12 + posX*1.9)*30);
 
   drawDescendingSubPolysWithAnchor(
     anchorFn,
     hostPoly,
     drawDepth,
     ratio,
-    undefined, 
-    (i) => stroke(270, 50, 12, 0.9*(200/i**2))
-  );  
+    undefined,
+    (i) => stroke(
+      270,
+      50,
+      12,
+      0.9
+    )
+  ); 
 }

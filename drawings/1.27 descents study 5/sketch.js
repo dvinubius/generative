@@ -51,6 +51,7 @@ function draw() {
   
   stroke(10);
   noFill();   
+  strokeWeight(0.2);
   rect(0,0,width,height);
   
    hostPoly = [
@@ -64,10 +65,6 @@ function draw() {
   ];
   
   
-  noFill();
-  strokeWeight(0.2);
-  stroke(270, 50, 12, 0.9);
-  
   const posY = useLastPosXY ? lastY : mouseY;
   const posX = useLastPosXY ? lastX : mouseX;
   lastX = posX;
@@ -79,27 +76,12 @@ function draw() {
   // anchorFn = (i) => createVector(posX - (i / 8)**8, posY + (i**2/4 - i * 24)*direction);
   anchorFn = (i) => createVector(-2, posY);
 
-  drawDescendingSubPolysWithAnchor1(
+  drawDescendingSubPolysWithAnchor(
     anchorFn,
     hostPoly,
     drawDepth,
     ratio,
+    undefined,
+    (i) => stroke(270, 50, 12, 0.9*(1 - 20/i**2))
   );  
 }
-
-const drawDescendingSubPolysWithAnchor1 = (anchorGen, hostPoly, depth, ratio = 0.5, curved = false) => {
-  let nextPoly = hostPoly;
-  for (let i = 0; i < depth; i++) {
-    const doClose = false;
-    stroke(270, 50, 12, 0.9*(1 - 20/i**2));
-    curved ? drawPolygonCurved(nextPoly, doClose) : drawPolygon(nextPoly, doClose);
-    
-    const polygonPoints = nextPoly;
-    const len = polygonPoints.length;
-    nextPoly = [anchorGen(i)].concat(polygonPoints.map((point, i) => {
-      const nextPoint = i < len - 1 ? polygonPoints[i + 1] : polygonPoints[0];
-      return pointBtw(point, nextPoint, ratio);
-    }));
-    nextPoly[nextPoly.length - 1] = nextPoly[0];
-  }
-};
