@@ -1,0 +1,9 @@
+{
+  "name": "123starter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^2.0.0-rc.0"
+  }
+}
