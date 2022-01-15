@@ -10,7 +10,7 @@ const pointBtw = (p1, p2, farFromP1) => {
 };
 
 const polygonPulledTowards = (source, target, pullFactor) => {
-  return source.map(p => pointBtw(p, target, pullFactor));
+  return source.map((p) => pointBtw(p, target, pullFactor));
 };
 
 const polygonPointsPulledTowards = (sourcePoints, targetPoint, pullFactor) =>
@@ -29,31 +29,48 @@ const walkPolygonIterations = (polygonPoints, manyIterations, stepFactorFn) => {
   return genPolys;
 };
 
-const genSingleSubPolygon = (hostPolygonPoints, ratioFn) => walkPolygonIterations(hostPolygonPoints, 1, ratioFn)[0];
+const genSingleSubPolygon = (hostPolygonPoints, ratioFn) =>
+  walkPolygonIterations(hostPolygonPoints, 1, ratioFn)[0];
 
-const drawDescendingSubPolys = (hostPoly, depth, ratio = 0.5, curved = false) => {
+const drawDescendingSubPolys = (
+  hostPoly,
+  depth,
+  ratio = 0.5,
+  curved = false
+) => {
   let nextPoly = hostPoly;
   for (let i = 0; i < depth; i++) {
     curved ? drawPolygonCurved(nextPoly) : drawPolygon(nextPoly);
     nextPoly = genSingleSubPolygon(nextPoly, () => ratio);
   }
-}
+};
 
-const drawDescendingSubPolysWithAnchor = (anchorGen, hostPoly, depth, ratio = 0.5, curved = false, strkFn) => {
+const drawDescendingSubPolysWithAnchor = (
+  anchorGen,
+  hostPoly,
+  depth,
+  ratio = 0.5,
+  curved = false,
+  strkFn
+) => {
   let nextPoly = hostPoly;
   for (let i = 0; i < depth; i++) {
     const doClose = false;
     if (strkFn) {
       strkFn(i);
     }
-    curved ? drawPolygonCurved(nextPoly, doClose) : drawPolygon(nextPoly, doClose);
-    
+    curved
+      ? drawPolygonCurved(nextPoly, doClose)
+      : drawPolygon(nextPoly, doClose);
+
     const polygonPoints = nextPoly;
     const len = polygonPoints.length;
-    nextPoly = [anchorGen(i)].concat(polygonPoints.map((point, i) => {
-      const nextPoint = i < len - 1 ? polygonPoints[i + 1] : polygonPoints[0];
-      return pointBtw(point, nextPoint, ratio);
-    }));
+    nextPoly = [anchorGen(i)].concat(
+      polygonPoints.map((point, i) => {
+        const nextPoint = i < len - 1 ? polygonPoints[i + 1] : polygonPoints[0];
+        return pointBtw(point, nextPoint, ratio);
+      })
+    );
     nextPoly[nextPoly.length - 1] = nextPoly[0];
   }
 };
@@ -64,7 +81,8 @@ const descentInner = (polygonPoints, manyIterations, stepFactorFn1) => {
     const len = polygonPoints.length;
     const newPoly = [];
     polygonPoints.forEach((point, idx) => {
-      const nextPoint = idx < len - 1 ? polygonPoints[idx + 1] : polygonPoints[0];
+      const nextPoint =
+        idx < len - 1 ? polygonPoints[idx + 1] : polygonPoints[0];
       newPoly.push(pointBtw(point, nextPoint, stepFactorFn1(n)));
     });
     genPolys.push(newPoly);
@@ -87,12 +105,12 @@ const regPolygon = (x, y, radius, npoints) => {
 function createSliderWithState(initial = 1, posX = 30, posY = 60) {
   const sl = createSlider(0, 100, initial * 100, 1);
   const ret = {
-    sliderEl: sl, 
-    hasRecentChange: false
-  }
+    sliderEl: sl,
+    hasRecentChange: false,
+  };
   sl.position(posX, posY);
   sl.style("width", `200px`);
-  sl.input(() => ret.hasRecentChange = true);
+  sl.input(() => (ret.hasRecentChange = true));
   return ret;
 }
 
@@ -100,18 +118,24 @@ function createSliderWithStateAndText(initial = 1, posX = 30, posY = 60, text) {
   const ret = createSliderWithState(initial, posX + 28, posY);
   const sp = createSpan(text);
   sp.position(posX, posY);
-  sp.style('font-size', '14px');
-  sp.style('color', '#ffffff');
+  sp.style("font-size", "14px");
+  sp.style("color", "#ffffff");
   return ret;
-};
+}
 
-const chaikin = (polygonPoints, manyIterations, stepFactorFn1, stepFactorFn2) => {
+const chaikin = (
+  polygonPoints,
+  manyIterations,
+  stepFactorFn1,
+  stepFactorFn2
+) => {
   const genPolys = [];
   for (let n = 0; n < manyIterations; n++) {
     const len = polygonPoints.length;
     const newPoly = [];
     polygonPoints.forEach((point, idx) => {
-      const nextPoint = idx < len - 1 ? polygonPoints[idx + 1] : polygonPoints[0];
+      const nextPoint =
+        idx < len - 1 ? polygonPoints[idx + 1] : polygonPoints[0];
       newPoly.push(pointBtw(point, nextPoint, stepFactorFn1(n)));
       newPoly.push(pointBtw(point, nextPoint, stepFactorFn2(n)));
     });
@@ -120,7 +144,6 @@ const chaikin = (polygonPoints, manyIterations, stepFactorFn1, stepFactorFn2) =>
   }
   return genPolys;
 };
-
 
 const drawPolygon = (points, doClose = true) => {
   noFill();
@@ -135,4 +158,3 @@ const drawPolygonCurved = (points, doClose = true) => {
   points.forEach((p) => curveVertex(p.x, p.y));
   endShape(doClose ? CLOSE : null);
 };
-

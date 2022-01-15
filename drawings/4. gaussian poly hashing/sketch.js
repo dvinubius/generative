@@ -117,10 +117,3 @@ const gaussianPosForHash = (std) => {
   const scaled = xloc * sd + mean;
   return constrain(scaled, 0, 1); // Scale the gaussian random number by standard deviation and mean
 };
-
-const drawPolygon = (points) => {
-  noFill();
-  beginShape();
-  points.forEach((p) => vertex(p.x, p.y));
-  endShape(CLOSE);
-};

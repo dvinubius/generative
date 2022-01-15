@@ -74,10 +74,3 @@ function initPolys() {
     (it) => (it + 1) / iterations
   );
 }
-
-const drawPolygon = (points) => {
-  noFill();
-  beginShape();
-  points.forEach((p) => vertex(p.x, p.y));
-  endShape(CLOSE);
-};

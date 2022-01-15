@@ -24,12 +24,12 @@ function draw() {
     // stroke(i * 30, 50, 50, 0.4); // when not repainting on each draw
     stroke(map(i / iterations, 0, 1, 230, 150), 50, 50, 1);
     strokeWeight(map(i / iterations, 0, 1, 2, 0.2));
-    p.draw(i == 0 ? color(`hsla(230, 80%, 65%,0.4)`) : null);
+    drawPoly(p, i == 0 ? color(`hsla(230, 80%, 65%,0.4)`) : null);
   });
 }
 
 function initHostPoly() {
-  basePolygon = new Poly(
+  basePolygon = [
     createVector(offset + random(width / 4), offset + random(height / 4)),
     createVector(
       width - offset - random(width / 4),
@@ -42,8 +42,8 @@ function initHostPoly() {
     createVector(
       offset + random(width / 4),
       height - offset - random(height / 4)
-    )
-  );
+    ),
+  ];
 }
 
 function generatePullsFor(p) {
@@ -52,33 +52,24 @@ function generatePullsFor(p) {
     const xTarget = clicked ? mouseX : width / 2;
     const yTarget = clicked ? mouseY : height / 2;
     const target = createVector(xTarget, yTarget);
-    const pulled = new Poly(
-      ...polygonPulledTowards(ret[i - 1], target, 2 / iterations)
-    );
+    const pulled = polygonPulledTowards(ret[i - 1], target, 2 / iterations);
+
     ret.push(pulled);
   }
   return ret;
 }
 
-class Poly {
-  constructor(p1, p2, p3, p4) {
-    this.p1 = p1;
-    this.p2 = p2;
-    this.p3 = p3;
-    this.p4 = p4;
+const drawPoly = (p, col) => {
+  if (col) {
+    fill(col);
+  } else {
+    noFill();
   }
-
-  draw(col) {
-    if (col) {
-      fill(col);
-    } else {
-      noFill();
-    }
-    beginShape();
-    vertex(this.p1.x, this.p1.y);
-    vertex(this.p2.x, this.p2.y);
-    vertex(this.p3.x, this.p3.y);
-    vertex(this.p4.x, this.p4.y);
-    endShape(CLOSE);
-  }
-}
+  beginShape();
+  const [p1, p2, p3, p4] = p;
+  vertex(p1.x, p1.y);
+  vertex(p2.x, p2.y);
+  vertex(p3.x, p3.y);
+  vertex(p4.x, p4.y);
+  endShape(CLOSE);
+};
