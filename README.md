@@ -2,7 +2,7 @@
 
 Various generative art techniques, experiments in digital fun.
 
-(Explore Works)[https://dvinubius-generative.vercel.app]
+[Explore Works](https://dvinubius-generative.vercel.app)
 
 ## Highlights
 
