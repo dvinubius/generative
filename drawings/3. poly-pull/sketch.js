@@ -11,6 +11,11 @@ function mouseClicked() {
 
 function setup() {
   createCanvas(740, 740);
+  let text = createP("Click it");
+  text.position(60, 10);
+  text.style("color", "white");
+  text.style("font-family", "Courier New");
+  text.style("font-size", "18px");
   colorMode(HSL);
   background(52, 2, 97);
   initHostPoly();
