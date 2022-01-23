@@ -2,7 +2,7 @@
 
 Various generative art techniques, experiments in digital fun.
 
-## [Explore Works](https://thawing-earth-48039.herokuapp.com/)✨
+## [Explore Works](https://dvinubius-generative.vercel.app/)✨
 
 ## A glimpse
 
